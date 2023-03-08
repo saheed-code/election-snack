@@ -1,2 +1,32 @@
-package com.paragon.poll.controllers;public class VoterController {
+package com.paragon.poll.controllers;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.paragon.poll.dtos.requests.RegisterRequest;
+import com.paragon.poll.dtos.responses.RegisterResponse;
+import com.paragon.poll.services.VoterService;
+import lombok.AllArgsConstructor;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.nio.channels.MulticastChannel;
+
+@RestController
+@RequestMapping("/poll")
+@AllArgsConstructor
+public class VoterController {
+    private final VoterService voterService;
+
+    @PostMapping(value="/register", consumes= {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<?> register(@RequestParam String request, @RequestParam("image") MultipartFile image) throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        RegisterRequest registerRequest = objectMapper.readValue(request, RegisterRequest.class);
+        registerRequest.setProfileImage(image);
+        RegisterResponse response = voterService.register(registerRequest);
+
+        return ResponseEntity.status(response.getCode()).body(response);
+    }
 }

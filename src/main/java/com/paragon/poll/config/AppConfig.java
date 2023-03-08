@@ -1,4 +1,4 @@
-package africa.semicolon.uberClone.config;
+package com.paragon.poll.config;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
@@ -34,10 +34,7 @@ public class AppConfig {
         );
     }
 
-    @Bean
-    public MailConfig mailConfig(){
-        return new MailConfig(mailApiKey, mailUrl);
-    }
+
 
 
 

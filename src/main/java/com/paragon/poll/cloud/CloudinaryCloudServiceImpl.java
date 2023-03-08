@@ -1,8 +1,9 @@
-package africa.semicolon.uberClone.cloud;
+package com.paragon.poll.cloud;
 
-import africa.semicolon.uberClone.exception.ImageUploadException;
+
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import com.paragon.poll.exceptions.ImageUploadException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -13,8 +14,6 @@ import java.util.Map;
 
 @Service
 @AllArgsConstructor
-@Slf4j
-
 public class CloudinaryCloudServiceImpl implements CloudService{
     private final Cloudinary cloudinary;
 
@@ -23,7 +22,6 @@ public class CloudinaryCloudServiceImpl implements CloudService{
         try{
             Map<?,?> response =
                     cloudinary.uploader().upload(image.getBytes(), ObjectUtils.emptyMap());
-            log.info("response::{}", response);
             return response.get("url").toString();
         } catch (IOException e) {
             throw new ImageUploadException(e.getMessage());

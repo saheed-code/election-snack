@@ -1,4 +1,4 @@
-package africa.semicolon.uberClone.cloud;
+package com.paragon.poll.cloud;
 
 import org.springframework.web.multipart.MultipartFile;
 

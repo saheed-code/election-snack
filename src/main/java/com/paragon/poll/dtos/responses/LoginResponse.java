@@ -1,2 +1,8 @@
-package com.paragon.poll.dtos.requests;public class LoginResponse {
+package com.paragon.poll.dtos.responses;
+
+import lombok.Setter;
+
+@Setter
+public class LoginResponse {
+    private String message;
 }
