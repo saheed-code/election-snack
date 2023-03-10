@@ -26,5 +26,6 @@ public class AppUser {
     private String nin;
     private String profileImage;
     private String password;
+    private String createdAt;
     private Boolean isApproved;
 }

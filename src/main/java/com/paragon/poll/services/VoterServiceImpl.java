@@ -1,36 +1,28 @@
 package com.paragon.poll.services;
 
-import com.paragon.poll.cloud.CloudService;
 import com.paragon.poll.data.models.AppUser;
 import com.paragon.poll.data.models.Candidate;
-import com.paragon.poll.data.models.Vote;
 import com.paragon.poll.data.models.Voter;
-import com.paragon.poll.data.repositories.AppUserRepository;
 import com.paragon.poll.data.repositories.CandidateRepository;
-import com.paragon.poll.data.repositories.VoteRepository;
 import com.paragon.poll.data.repositories.VoterRepository;
 import com.paragon.poll.dtos.requests.*;
 import com.paragon.poll.dtos.responses.RegisterResponse;
-import com.paragon.poll.dtos.responses.VoteResponse;
 import com.paragon.poll.exceptions.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
 import java.util.Optional;
+
 
 @AllArgsConstructor
 @Service
 @Slf4j
 public class VoterServiceImpl implements VoterService{
     private final VoterRepository voterRepository;
-    private final VoteRepository voteRepository;
     private final AppUserService appUserService;
-    private final CandidateRepository candidateRepository;
+    private final CandidateService candidateService;
+//    private  Voter voter;
 
     @Override
     public RegisterResponse register(RegisterRequest request) {
@@ -46,7 +38,7 @@ public class VoterServiceImpl implements VoterService{
                     .code(HttpStatus.CREATED.value())
                     .id(savedVoter.getId())
                     .isSuccessful(true)
-                    .message("Driver Registration Successful")
+                    .message("Registration Successful")
                     .build();
 
     }
@@ -62,8 +54,7 @@ public class VoterServiceImpl implements VoterService{
 
     @Override
     public UpdateResponse updateVoter(UpdateRequest request) {
-
-        Voter voter = confirmVoter(request.getId());;
+        Voter voter = confirmVoter(request.getId());
 
         Long id = voter.getUserDetails().getId();
 
@@ -74,10 +65,6 @@ public class VoterServiceImpl implements VoterService{
         return new UpdateResponse("Update successful");
     }
 
-    @Override
-    public VoteResponse vote(VoteRequest request) {
-        return null;
-    }
 
     @Override
     public Voter confirmVoter(Long id) {
@@ -93,8 +80,24 @@ public class VoterServiceImpl implements VoterService{
         voterRepository.save(voter);
     }
 
-    private boolean hasVoted(VoteRequest request){
-       return false;
+    public void vote(VoteRequest request){
+        Voter voter = confirmVoter(request.getVoterId());
+        boolean alreadyVoted = hasVoted(request.getVoterId(), request.getCandidateId());
+        if (alreadyVoted) throw new DoubleVoteException("You have already voted for this candidate");
+        else {
+            Candidate choiceCandidate = candidateService.confirmCandidate(request.getCandidateId());
+            voter.getChoiceCandidate().add(choiceCandidate);
+            saveVoter(voter);
+
+            choiceCandidate.setVotesAcquired(choiceCandidate.getVotesAcquired()+1);
+            candidateService.saveCandidate(choiceCandidate);
+        }
+    }
+
+    private boolean hasVoted(Long voterId, Long candidateId){
+        Voter voter = confirmVoter(voterId);
+        return voter.getChoiceCandidate().stream()
+                .anyMatch(c -> c.getId().equals(candidateId));
     }
 
 

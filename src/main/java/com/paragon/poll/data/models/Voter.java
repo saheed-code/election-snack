@@ -19,5 +19,5 @@ public class Voter {
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private AppUser userDetails;
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private List<Vote> votes;
+    private List<Candidate> choiceCandidate;
 }

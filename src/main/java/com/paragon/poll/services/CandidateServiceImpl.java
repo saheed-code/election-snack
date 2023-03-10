@@ -49,7 +49,7 @@ public class CandidateServiceImpl implements CandidateService {
                 .code(HttpStatus.CREATED.value())
                 .id(savedCandidate.getId())
                 .isSuccessful(true)
-                .message("Driver Registration Successful")
+                .message("Registration Successful")
                 .build();
 
     }

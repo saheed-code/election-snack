@@ -18,5 +18,5 @@ public class Candidate {
     private String ped;
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private AppUser userDetails;
-    private int votesGained;
+    private int votesAcquired;
 }
