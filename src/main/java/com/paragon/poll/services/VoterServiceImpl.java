@@ -22,7 +22,6 @@ public class VoterServiceImpl implements VoterService{
     private final VoterRepository voterRepository;
     private final AppUserService appUserService;
     private final CandidateService candidateService;
-//    private  Voter voter;
 
     @Override
     public RegisterResponse register(RegisterRequest request) {

@@ -2,6 +2,7 @@ package com.paragon.poll.controllers;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.paragon.poll.dtos.requests.LoginRequest;
 import com.paragon.poll.dtos.requests.RegisterRequest;
 import com.paragon.poll.dtos.requests.UpdateRequest;
 import com.paragon.poll.dtos.responses.RegisterResponse;
@@ -31,6 +32,13 @@ public class VoterController {
 
         return ResponseEntity.status(response.getCode()).body(response);
     }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody LoginRequest request){
+        var response = voterService.login(request);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
 
     @PatchMapping(value="{voterId}", consumes=MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> update(@PathVariable Long voterId, @RequestBody UpdateRequest request){

@@ -15,7 +15,8 @@ public interface AdminService {
     RegisterResponse register(RegisterRequest request);
     void verifyVoterAccount(Long id);
     void verifyCandidateAccount(Long id);
-    Optional<Voter> getVoterById(Long id);
-    Optional<Candidate> getCandidateById(Long id);
+    GetResponse getVoterById(Long id);
+    GetResponse getCandidateById(Long id);
     GetAllResponse getAllVoters(int pageNumber, int pageSize);
+    GetAllResponse getAllCandidates(int pageNumber, int pageSize);
 }

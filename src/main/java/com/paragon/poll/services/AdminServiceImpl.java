@@ -11,6 +11,7 @@ import com.paragon.poll.dtos.requests.RegisterRequest;
 import com.paragon.poll.dtos.responses.GetAllResponse;
 import com.paragon.poll.dtos.responses.GetResponse;
 import com.paragon.poll.dtos.responses.RegisterResponse;
+import com.paragon.poll.exceptions.UserNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -51,12 +52,14 @@ public class AdminServiceImpl implements AdminService{
     }
 
 
+    @Override
     public void verifyVoterAccount(Long id){
         Voter voter = voterService.confirmVoter(id);
         voter.getUserDetails().setIsApproved(true);
         voterService.saveVoter(voter);
     }
 
+    @Override
     public void verifyCandidateAccount(Long id){
         Candidate candidate = candidateService.confirmCandidate(id);
         candidate.getUserDetails().setIsApproved(true);
@@ -64,13 +67,18 @@ public class AdminServiceImpl implements AdminService{
     }
 
     @Override
-    public Optional<Voter> getVoterById(Long id) {
-        return voterRepository.findById(id);
+    public GetResponse getVoterById(Long id) {
+        Voter voter = voterRepository.findById(id)
+                .orElseThrow(()-> new UserNotFoundException(String.format("Voter with id %d was not found", id)));
+        return mapVoterToResponse(voter);
     }
 
+
     @Override
-    public Optional<Candidate> getCandidateById(Long id) {
-        return candidateRepository.findById(id);
+    public GetResponse getCandidateById(Long id) {
+        Candidate candidate = candidateRepository.findById(id)
+                .orElseThrow(()-> new UserNotFoundException(String.format("Candidate with id %d was not found", id)));
+        return mapCandidateToResponse(candidate);
     }
 
     @Override
@@ -88,15 +96,20 @@ public class AdminServiceImpl implements AdminService{
         return getAllResponse;
     }
 
+    @Override
+    public GetAllResponse getAllCandidates(int pageNumber, int pageSize) {
+        return null;
+    }
+
     private GetResponse mapVoterToResponse(Voter voter){
-        return getGetResponse(voter.getId(), voter.getUserDetails());
+        return mapToGetResponse(voter.getId(), voter.getUserDetails());
     }
 
     private GetResponse mapCandidateToResponse(Candidate candidate){
-        return getGetResponse(candidate.getId(), candidate.getUserDetails());
+        return mapToGetResponse(candidate.getId(), candidate.getUserDetails());
     }
 
-    private GetResponse getGetResponse(Long id, AppUser userDetails) {
+    private GetResponse mapToGetResponse(Long id, AppUser userDetails) {
         GetResponse getResponse = new GetResponse();
         getResponse.setId(id);
         getResponse.setFirstName(userDetails.getFirstName());
